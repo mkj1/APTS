@@ -10,5 +10,8 @@ package apts;
  * @author gxv
  */
 public class Gate {
-    
+    Gate(int distance){
+        Distance = distance;
+    }
+    private int Distance;
 }
