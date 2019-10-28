@@ -11,12 +11,12 @@ package apts;
  */
 public class Passenger {
     private String _ID;
-    private String _GateID;
+    public Gate gate;
     private int _ArrivalTime;
     
-    public Passenger(String ID, String GateID, int ArrivalTime){
+    public Passenger(String ID, Gate g, int ArrivalTime){
         _ID = ID;
-        _GateID = GateID;
+        gate = g;
         _ArrivalTime = ArrivalTime;
     }
 }

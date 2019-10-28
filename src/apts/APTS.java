@@ -24,36 +24,40 @@ public class APTS {
      */
     public static void main(String[] args) {
         
-        gate1 = new Gate(500);
-        passengerQueue = new LinkedList<Passenger>();
-        vehicleQueue = new LinkedList<Car>();
-        vehicleQueue.add(new Car("A", 10));
-        
-        for(int i = 0; i < 500; i++){
+        Initialize();
+    
+        for(int i = 0; i < 200; i++){
             Update();
         }
         
     }
     
+    
+    public static void Initialize(){
+        gate1 = new Gate(1);
+        passengerQueue = new LinkedList<Passenger>();
+        vehicleQueue = new LinkedList<Car>();
+        vehicleQueue.add(new Car("A", 10));
+        vehicleQueue.add(new Car("B", 10));
+    }
+    
     public static void Update(){
         if(tick%5==0){
-           passengerQueue.add(new Passenger("Mike" + tick,"A",tick)); 
+           passengerQueue.add(new Passenger("P" + tick, gate1,tick));
+           passengerQueue.add(new Passenger("A" + tick, gate1,tick)); 
         }
         
         if(!vehicleQueue.isEmpty()){
             for(Car c : vehicleQueue){
-            if(c.idle){
-                passengerQueue.pop();
-                c.idle = false;
+                if(c.idle==true && !passengerQueue.isEmpty()){
+                    c.idle = false;
+                    c.TakeNewPassenger(passengerQueue.pop());
 
+                }
+                c.Update(); 
             }
-            break;
-        }
-            
-            
         }
         
         tick++;
-    }
-    
+    }    
 }

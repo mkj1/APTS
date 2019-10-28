@@ -12,21 +12,53 @@ package apts;
 public class Car {
     Car(String id, int speed){
         ID = id;
-        Speed = speed;
-        idle = true;       
+        idle = true; 
+        direction = "GATE";
+        atGate = false;       
     }
     
-    public void SetPassenger(Passenger p){
-        _passenger = p;
+    public void TakeNewPassenger(Passenger p){
+        ticksToGate = p.gate.Distance;
+        ticksToEntrance = p.gate.Distance;
+        passenger = p;
     }
     
-    public Passenger GetPassenger(Passenger p){
-        return _passenger;
+    public void Update(){
+        switch(direction){
+            case "GATE":
+                if(ticksToGate<1){
+                    atGate = true;
+                    direction = "ENTRANCE";
+                }
+                else{
+                    ticksToGate--;
+                }
+                break;
+                
+            case "ENTRANCE":
+                if(ticksToEntrance<1){
+                    idle = true;
+                    direction = "GATE";
+                    
+                }
+                else{
+                    ticksToEntrance--;
+                }
+                break;
+                
+        }
+        
+
     }
     
+    public Boolean atGate;
     public Boolean idle;
-    private Passenger _passenger;
     private String ID;
     private int BatteryLevel;
     private int Speed;
+    private int ticksToGate;
+    private int ticksToEntrance;
+    private String direction;
+    private Passenger passenger;
+    
 }
