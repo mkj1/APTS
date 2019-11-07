@@ -10,8 +10,10 @@ package apts;
  * @author gxv
  */
 public class Gate {
-    Gate(int distance){
+    public Gate(int distance, String name){
+        Name = name;
         Distance = distance;
     }
     public int Distance;
+    public String Name;
 }
