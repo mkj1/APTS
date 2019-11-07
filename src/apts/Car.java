@@ -10,16 +10,17 @@ package apts;
  * @author gxv
  */
 public class Car {
-    Car(String id, int speed){
-        ID = id;
-        idle = true; 
-        direction = "GATE";
-        atGate = false;       
+    public Car(String id, int speed){
+        this.ID = id;
+        this.idle = true; 
+        this.direction = "GATE";
+        this.atGate = false;
+        this.speed = speed;
     }
     
     public void TakeNewPassenger(Passenger p){
-        ticksToGate = p.gate.Distance;
-        ticksToEntrance = p.gate.Distance;
+        ticksToGate = ((p.gate.Distance/speed)*60*60)/1000;
+        ticksToEntrance = ((p.gate.Distance/speed)*60*60)/1000;
         passenger = p;
     }
     
@@ -55,9 +56,9 @@ public class Car {
     public Boolean idle;
     private String ID;
     private int BatteryLevel;
-    private int Speed;
-    private int ticksToGate;
-    private int ticksToEntrance;
+    private int speed;
+    public int ticksToGate;
+    public int ticksToEntrance;
     private String direction;
     private Passenger passenger;
     
