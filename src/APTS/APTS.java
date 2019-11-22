@@ -11,7 +11,7 @@ public class APTS extends Model {
     /**
      * model parameter: the number of van carriers
      */
-    protected static int NUM_CARS = 4;
+    protected static int NUM_CARS = 6;
 
     protected static Gate GATE_A = new Gate("A", 720);
     protected static Gate GATE_B = new Gate("B", 660);
@@ -196,7 +196,7 @@ public class APTS extends Model {
         idleCarQueue = new Queue<Car>(this, "idle Car Queue", true, true);
         chargingCarQueue = new Queue<Car>(this, "charging Car Queue", true, true);
         
-        queueLength = new TimeSeries(this,"queue length","QueueLength.txt",new TimeInstant(0.0),new TimeInstant(90000.0),true,true);
+        queueLength = new TimeSeries(this,"queue length","QueueLength.txt",new TimeInstant(0.0),new TimeInstant(86400.0),true,true);
 
         // place the van carriers into the idle queue
         // We don't do this in the doInitialSchedules() method because

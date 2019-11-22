@@ -56,8 +56,9 @@ public class ChargeEndEvent extends Event<Car> {
             // remove the first waiting p from the queue
             Passenger nextPassenger = myModel.passengerQueue.first();
             if (car.batteryDistance > nextPassenger._gate.distance) {
-                myModel.queueLength.update(myModel.passengerQueue.length());
+                
                 myModel.passengerQueue.remove(nextPassenger);
+                myModel.queueLength.update(myModel.passengerQueue.length());
 
                 // create a new service end event
                 ServiceEndEvent event = new ServiceEndEvent(myModel, "ServiceEndEvent", true);

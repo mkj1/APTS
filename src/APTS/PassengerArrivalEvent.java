@@ -62,8 +62,9 @@ public class PassengerArrivalEvent extends Event<Passenger> {
                 myModel.idleCarQueue.remove(car);
 
                 // remove the p from the queue
-                myModel.queueLength.update(myModel.passengerQueue.length());
+                
                 myModel.passengerQueue.remove(p);
+                myModel.queueLength.update(myModel.passengerQueue.length());
 
                 // create a service end event
                 ServiceEndEvent serviceEnd = new ServiceEndEvent(myModel, "ServiceEndEvent", true);
