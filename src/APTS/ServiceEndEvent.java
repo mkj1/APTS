@@ -48,30 +48,6 @@ public class ServiceEndEvent extends EventOf2Entities<Car, Passenger> {
 
         // pass the departure of the p to the trace
         sendTraceNote(p + " arrived at the destination gate");
-        Queue<Passenger> queue = null;
-
-        switch (p._gate.name) {
-            case "A":
-                queue = myModel.passengerQueueA;
-                break;
-            case "B":
-                queue = myModel.passengerQueueB;
-                break;
-            case "C":
-                queue = myModel.passengerQueueC;
-                break;
-            case "D":
-                queue = myModel.passengerQueueD;
-                break;
-            case "F":
-                queue = myModel.passengerQueueF;
-                break;
-        }
-        // bring back passenger waiting at gate       
-        if (!queue.isEmpty()) {
-            var pas = queue.first();
-            queue.remove(pas);
-        }
 
         // check if there are other passengers waiting
         if (!myModel.passengerQueue.isEmpty()) {
@@ -80,9 +56,32 @@ public class ServiceEndEvent extends EventOf2Entities<Car, Passenger> {
             // remove the first waiting p from the queue
             Passenger nextPassenger = myModel.passengerQueue.first();
             if (car.batteryDistance > nextPassenger._gate.distance) {
-                
+
                 myModel.passengerQueue.remove(nextPassenger);
-                myModel.queueLength.update(myModel.passengerQueue.length());
+                //myModel.queueLength.update(myModel.passengerQueue.length());
+                //myModel.returnQueueLength.update(myModel.passengerQueueReturn.length());
+
+                // create a new service end event
+                ServiceEndEvent event = new ServiceEndEvent(myModel, "ServiceEndEvent", true);
+                // and schedule it for the car at the appropriate time
+
+                event.schedule(car, nextPassenger, new TimeSpan(myModel.getServiceTime(nextPassenger._gate.distance), TimeUnit.MINUTES));
+            } else {
+                myModel.chargingCarQueue.insert(car);
+                // create a service end event
+                ChargeEndEvent chargeEnd = new ChargeEndEvent(myModel, "ServiceEndEvent", true);
+                chargeEnd.schedule(car, new TimeSpan(myModel.getChargeTime(), TimeUnit.MINUTES));
+            }
+
+        } else if (!myModel.passengerQueueReturn.isEmpty()) {
+
+            // remove the first waiting p from the queue
+            Passenger nextPassenger = myModel.passengerQueueReturn.first();
+            if (car.batteryDistance > nextPassenger._gate.distance) {
+
+                myModel.passengerQueueReturn.remove(nextPassenger);
+                //myModel.queueLength.update(myModel.passengerQueue.length());
+                //myModel.returnQueueLength.update(myModel.passengerQueueReturn.length());
 
                 // create a new service end event
                 ServiceEndEvent event = new ServiceEndEvent(myModel, "ServiceEndEvent", true);

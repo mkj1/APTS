@@ -11,19 +11,21 @@ public class APTS extends Model {
     /**
      * model parameter: the number of van carriers
      */
-    protected static int NUM_CARS = 6;
+    protected static int NUM_CARS = 200;
 
     protected static Gate GATE_A = new Gate("A", 720);
     protected static Gate GATE_B = new Gate("B", 660);
     protected static Gate GATE_C = new Gate("C", 690);
     protected static Gate GATE_D = new Gate("D", 320);
     protected static Gate GATE_F = new Gate("F", 760);
+    protected static Gate GATE_RETURN = new Gate("RETURN", 600);
 
     protected String nextArrivalGate = "A";
     private ContDistUniform batteryDistance;
     private ContDistUniform chargeTime;
     
     protected TimeSeries queueLength;
+    protected TimeSeries returnQueueLength;
 
     /**
      * Random number stream used to draw an arrival time for the next truck. See
@@ -47,11 +49,8 @@ public class APTS extends Model {
      */
     protected Queue<Passenger> passengerQueue;
 
-    protected Queue<Passenger> passengerQueueA;
-    protected Queue<Passenger> passengerQueueB;
-    protected Queue<Passenger> passengerQueueC;
-    protected Queue<Passenger> passengerQueueD;
-    protected Queue<Passenger> passengerQueueF;
+    protected Queue<Passenger> passengerQueueReturn;
+
     /**
      * A waiting queue object is used to represent the parking spot for the VC.
      * If there is no truck waiting for service the VC will return here and wait
@@ -116,36 +115,46 @@ public class APTS extends Model {
         // create the ReturnPassengerGeneratorEvent
         ReturnPassengerGeneratorEvent returnPassengerGenerator
                 = new ReturnPassengerGeneratorEvent(this, "ReturnPassengerGenerator", true);
+        
+                // create the PassengerGeneratorEvent
+        TimeSeriesGeneratorEvent seriesGenerator
+                = new TimeSeriesGeneratorEvent(this, "TimeSeriesGenerator", true);
 
         // schedule for start of simulation
         passengerGenerator.schedule(new TimeSpan(0));
         // schedule for start of simulation
         returnPassengerGenerator.schedule(new TimeSpan(0));
+        
+        seriesGenerator.schedule(new TimeSpan(0));
     }
 
     public Gate getRandomGate() {
         Random rand = new Random();
         var r = rand.nextInt(5);
-        Gate returnGate = null;
+        Gate g = null;
 
         switch (r) {
             case 0:
-                returnGate = GATE_A;
+                g = GATE_A;
                 break;
             case 1:
-                returnGate = GATE_B;
+                g = GATE_B;
                 break;
             case 2:
-                returnGate = GATE_C;
+                g = GATE_C;
                 break;
             case 3:
-                returnGate = GATE_D;
+                g = GATE_D;
                 break;
             case 4:
-                returnGate = GATE_F;
+                g = GATE_F;
                 break;
         }
-        return returnGate;
+        return g;
+    }
+    
+    public Gate getReturnGate(){
+        return GATE_RETURN;
     }
 
     /**
@@ -181,11 +190,7 @@ public class APTS extends Model {
         // true          = show in trace?
         passengerQueue = new Queue<Passenger>(this, "Passenger Queue", true, true);
 
-        passengerQueueA = new Queue<Passenger>(this, "Passenger Queue Gate A", true, true);
-        passengerQueueB = new Queue<Passenger>(this, "Passenger Queue Gate B", true, true);
-        passengerQueueC = new Queue<Passenger>(this, "Passenger Queue Gate C", true, true);
-        passengerQueueD = new Queue<Passenger>(this, "Passenger Queue Gate D", true, true);
-        passengerQueueF = new Queue<Passenger>(this, "Passenger Queue Gate F", true, true);
+        passengerQueueReturn = new Queue<Passenger>(this, "Passenger Return Queue", true, true);
 
         // initalise the idleCarQueue
         // Parameters:
@@ -197,6 +202,7 @@ public class APTS extends Model {
         chargingCarQueue = new Queue<Car>(this, "charging Car Queue", true, true);
         
         queueLength = new TimeSeries(this,"queue length","QueueLength.txt",new TimeInstant(0.0),new TimeInstant(86400.0),true,true);
+        returnQueueLength = new TimeSeries(this,"return queue length","ReturnQueueLength.txt",new TimeInstant(0.0),new TimeInstant(86400.0),true,true);
 
         // place the van carriers into the idle queue
         // We don't do this in the doInitialSchedules() method because
@@ -249,6 +255,7 @@ public class APTS extends Model {
     public double getPassengerGateArrivalTime() {
         return planeArrivalTime.sample();
     }
+    
 
     /**
      * Runs the model.

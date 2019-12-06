@@ -58,7 +58,8 @@ public class ChargeEndEvent extends Event<Car> {
             if (car.batteryDistance > nextPassenger._gate.distance) {
                 
                 myModel.passengerQueue.remove(nextPassenger);
-                myModel.queueLength.update(myModel.passengerQueue.length());
+                //myModel.queueLength.update(myModel.passengerQueue.length());
+                //myModel.returnQueueLength.update(myModel.passengerQueueReturn.length());
 
                 // create a new service end event
                 ServiceEndEvent event = new ServiceEndEvent(myModel, "ServiceEndEvent", true);
@@ -72,7 +73,29 @@ public class ChargeEndEvent extends Event<Car> {
                 chargeEnd.schedule(car, new TimeSpan(myModel.getChargeTime(), TimeUnit.MINUTES));
             }
 
-        } else {
+        } else if (!myModel.passengerQueueReturn.isEmpty()) {
+
+            // remove the first waiting p from the queue
+            Passenger nextPassenger = myModel.passengerQueueReturn.first();
+            if (car.batteryDistance > nextPassenger._gate.distance) {
+
+                myModel.passengerQueueReturn.remove(nextPassenger);
+                //myModel.queueLength.update(myModel.passengerQueue.length());
+                //myModel.returnQueueLength.update(myModel.passengerQueueReturn.length());
+
+                // create a new service end event
+                ServiceEndEvent event = new ServiceEndEvent(myModel, "ServiceEndEvent", true);
+                // and schedule it for the car at the appropriate time
+
+                event.schedule(car, nextPassenger, new TimeSpan(myModel.getServiceTime(nextPassenger._gate.distance), TimeUnit.MINUTES));
+            } else {
+                myModel.chargingCarQueue.insert(car);
+                // create a service end event
+                ChargeEndEvent chargeEnd = new ChargeEndEvent(myModel, "ServiceEndEvent", true);
+                chargeEnd.schedule(car, new TimeSpan(myModel.getChargeTime(), TimeUnit.MINUTES));
+            }
+
+        }  else {
             // NO, there are no passengers waiting
 
             // --> the van carrier is placed on its parking spot

@@ -38,41 +38,15 @@ public class ReturnPassengerGeneratorEvent extends ExternalEvent {
      * again for the next new truck generation.
      */
     public void eventRoutine() {
-        
-        Queue<Passenger> queueRef = null;
-        
-        switch(myModel.nextArrivalGate){
-            case "A":
-                queueRef = myModel.passengerQueueA;
-                myModel.nextArrivalGate = "B";
-                break;
-             case "B":
-                 queueRef = myModel.passengerQueueB;
-                 myModel.nextArrivalGate = "C";
-                break;
-             case "C":
-                 queueRef = myModel.passengerQueueC;
-                 myModel.nextArrivalGate = "D";
-                break;
-             case "D":
-                 queueRef = myModel.passengerQueueD;
-                 myModel.nextArrivalGate = "F";
-                break;
-             case "F":
-                 queueRef = myModel.passengerQueueF;
-                 myModel.nextArrivalGate = "A";
-                break;   
-        }
+        // get a reference to the model
+        APTS model = (APTS) getModel();
 
-
-        for (int i = 0; i < 5; i++) {
-            // create a new passenger
-            Passenger passenger = new Passenger(myModel, "Passenger", true, null);
-            // p exits a plane and enters the gate ready for pickup
-            queueRef.insert(passenger);
-        }
-
-        sendTraceNote(queueRef.getName() + " length: " + queueRef.length());
+        // create a new passenger
+        Passenger passenger = new Passenger(model, "Passenger", true, model.getReturnGate());
+        // create a new truck arrival event
+        PassengerReturnArrivalEvent returnPassengerArrival = new PassengerReturnArrivalEvent(model, "PassengerReturnArrivalEvent", true);
+        // and schedule it for the current point in time
+        returnPassengerArrival.schedule(passenger, new TimeSpan(0.0));
 
         schedule(new TimeSpan(myModel.getPassengerGateArrivalTime(), TimeUnit.MINUTES));
 
