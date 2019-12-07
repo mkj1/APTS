@@ -5,15 +5,15 @@
         <group>
             <file>file:/C:/Users/gxv/Desktop/APTS/src/APTS/Passenger.java</file>
             <file>file:/C:/Users/gxv/Desktop/APTS/src/APTS/TimeSeriesGeneratorEvent.java</file>
-            <file>file:/C:/Users/gxv/Desktop/APTS/src/APTS/ReturnPassengerGeneratorEvent.java</file>
+            <file>file:/C:/Users/gxv/Desktop/APTS/src/APTS/DeparturePassengerGeneratorEvent.java</file>
+            <file>file:/C:/Users/gxv/Desktop/APTS/src/APTS/ArrivalPassengerEvent.java</file>
             <file>file:/C:/Users/gxv/Desktop/APTS/src/APTS/APTS.java</file>
             <file>file:/C:/Users/gxv/Desktop/APTS/src/APTS/ServiceEndEvent.java</file>
             <file>file:/C:/Users/gxv/Desktop/APTS/src/APTS/Gate.java</file>
             <file>file:/C:/Users/gxv/Desktop/APTS/src/APTS/Car.java</file>
-            <file>file:/C:/Users/gxv/Desktop/APTS/src/APTS/PassengerGeneratorEvent.java</file>
+            <file>file:/C:/Users/gxv/Desktop/APTS/src/APTS/DepaturePassengerEvent.java</file>
             <file>file:/C:/Users/gxv/Desktop/APTS/src/APTS/ChargeEndEvent.java</file>
-            <file>file:/C:/Users/gxv/Desktop/APTS/src/APTS/PassengerArrivalEvent.java</file>
-            <file>file:/C:/Users/gxv/Desktop/APTS/src/APTS/PassengerReturnArrivalEvent.java</file>
+            <file>file:/C:/Users/gxv/Desktop/APTS/src/APTS/ArrivalPassengerGeneratorEvent.java</file>
         </group>
     </open-files>
 </project-private>

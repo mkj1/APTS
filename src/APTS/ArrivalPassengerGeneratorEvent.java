@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Olaf Neidhardt, Ruth Meyer
  */
-public class ReturnPassengerGeneratorEvent extends ExternalEvent {
+public class ArrivalPassengerGeneratorEvent extends ExternalEvent {
 
     private APTS myModel;
 
@@ -26,7 +26,7 @@ public class ReturnPassengerGeneratorEvent extends ExternalEvent {
      * @param showInTrace flag to indicate if this event shall produce output
      * for the trace
      */
-    public ReturnPassengerGeneratorEvent(Model owner, String name, boolean showInTrace) {
+    public ArrivalPassengerGeneratorEvent(Model owner, String name, boolean showInTrace) {
         super(owner, name, showInTrace);
         myModel = (APTS) owner;
     }
@@ -44,11 +44,11 @@ public class ReturnPassengerGeneratorEvent extends ExternalEvent {
         // create a new passenger
         Passenger passenger = new Passenger(model, "Passenger", true, model.getReturnGate());
         // create a new truck arrival event
-        PassengerReturnArrivalEvent returnPassengerArrival = new PassengerReturnArrivalEvent(model, "PassengerReturnArrivalEvent", true);
+        ArrivalPassengerEvent returnPassengerArrival = new ArrivalPassengerEvent(model, "PassengerReturnArrivalEvent", true);
         // and schedule it for the current point in time
         returnPassengerArrival.schedule(passenger, new TimeSpan(0.0));
 
-        schedule(new TimeSpan(myModel.getPassengerGateArrivalTime(), TimeUnit.MINUTES));
+        schedule(new TimeSpan(myModel.getPassengerArrivalTime(), TimeUnit.MINUTES));
 
     }
 }

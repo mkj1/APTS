@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Olaf Neidhardt, Ruth Meyer
  */
-public class PassengerArrivalEvent extends Event<Passenger> {
+public class DepaturePassengerEvent extends Event<Passenger> {
 
     /**
      * a reference to the model this event is a part of. Useful shortcut to
@@ -30,7 +30,7 @@ public class PassengerArrivalEvent extends Event<Passenger> {
      * @param showInTrace flag to indicate if this event shall produce output
      * for the trace
      */
-    public PassengerArrivalEvent(Model owner, String name, boolean showInTrace) {
+    public DepaturePassengerEvent(Model owner, String name, boolean showInTrace) {
         super(owner, name, showInTrace);
         // store a reference to the model this event is associated with
         myModel = (APTS) owner;
@@ -48,8 +48,8 @@ public class PassengerArrivalEvent extends Event<Passenger> {
     public void eventRoutine(Passenger p) {
 
         // p enters airport entrance
-        myModel.passengerQueue.insert(p);
-        sendTraceNote("PassengerQueueLength: " + myModel.passengerQueue.length());
+        myModel.departurePassengerQueue.insert(p);
+        sendTraceNote("PassengerQueueLength: " + myModel.departurePassengerQueue.length());
 
         // check if a car is available
         if (!myModel.idleCarQueue.isEmpty()) {
@@ -57,15 +57,15 @@ public class PassengerArrivalEvent extends Event<Passenger> {
 
             // get a reference to the first car from the idle car queue
             Car car = myModel.idleCarQueue.first();
-            if (car.batteryDistance > 2 * p._gate.distance) {
+            if (car.remainingRange > 2 * p._gate.distance) {
                 // remove it from the queue
                 myModel.idleCarQueue.remove(car);
 
                 // remove the p from the queue
                 
-                myModel.passengerQueue.remove(p);
-                //myModel.queueLength.update(myModel.passengerQueue.length());
-                //myModel.returnQueueLength.update(myModel.passengerQueueReturn.length());
+                myModel.departurePassengerQueue.remove(p);
+                //myModel.queueLength.update(myModel.departurePassengerQueue.length());
+                //myModel.returnQueueLength.update(myModel.arrivalPassengerQueue.length());
 
                 // create a service end event
                 ServiceEndEvent serviceEnd = new ServiceEndEvent(myModel, "ServiceEndEvent", true);

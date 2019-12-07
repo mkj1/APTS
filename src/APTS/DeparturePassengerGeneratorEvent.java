@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
  * time when the next truck arrival is due.
  * @author Olaf Neidhardt, Ruth Meyer
  */
-public class PassengerGeneratorEvent extends ExternalEvent {
+public class DeparturePassengerGeneratorEvent extends ExternalEvent {
 
 	/**
 	 * Constructs a new TruckGeneratorEvent.
@@ -20,7 +20,7 @@ public class PassengerGeneratorEvent extends ExternalEvent {
 	 * @param name this event's name
 	 * @param showInTrace flag to indicate if this event shall produce output for the trace
 	 */
-	public PassengerGeneratorEvent(Model owner, String name, boolean showInTrace) {
+	public DeparturePassengerGeneratorEvent(Model owner, String name, boolean showInTrace) {
 		super(owner, name, showInTrace);
 	}
 	/**
@@ -37,7 +37,7 @@ public class PassengerGeneratorEvent extends ExternalEvent {
 		// create a new passenger
 		Passenger passenger = new Passenger(model, "Passenger", true, model.getRandomGate());
 		// create a new truck arrival event
-		PassengerArrivalEvent passengerArrival = new PassengerArrivalEvent(model, "PassengerArrivalEvent", true);
+		DepaturePassengerEvent passengerArrival = new DepaturePassengerEvent(model, "PassengerArrivalEvent", true);
 		// and schedule it for the current point in time
 		passengerArrival.schedule(passenger, new TimeSpan(0.0));
 

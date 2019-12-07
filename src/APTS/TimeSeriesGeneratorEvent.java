@@ -33,11 +33,10 @@ public class TimeSeriesGeneratorEvent extends ExternalEvent {
 
 		// get a reference to the model
 		APTS myModel = (APTS)getModel();
-                myModel.queueLength.update(myModel.passengerQueue.length());
-                myModel.returnQueueLength.update(myModel.passengerQueueReturn.length());
+                myModel.queueLength.update(myModel.departurePassengerQueue.length());
+                myModel.returnQueueLength.update(myModel.arrivalPassengerQueue.length());
 
-		// schedule this truck generator again for the next truck arrival time
-		schedule(new TimeSpan(1, TimeUnit.MINUTES));
+		schedule(new TimeSpan(30, TimeUnit.SECONDS));
 		// from inside to outside...
 		// draw a new inter-arrival time value
 		// wrap it in a TimeSpan object

@@ -8,10 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 public class APTS extends Model {
 
-    /**
-     * model parameter: the number of van carriers
-     */
-    protected static int NUM_CARS = 200;
+    protected static int NUM_CARS = 6;
 
     protected static Gate GATE_A = new Gate("A", 720);
     protected static Gate GATE_B = new Gate("B", 660);
@@ -21,7 +18,7 @@ public class APTS extends Model {
     protected static Gate GATE_RETURN = new Gate("RETURN", 600);
 
     protected String nextArrivalGate = "A";
-    private ContDistUniform batteryDistance;
+    private ContDistUniform remainingRange;
     private ContDistUniform chargeTime;
     
     protected TimeSeries queueLength;
@@ -47,9 +44,9 @@ public class APTS extends Model {
      *
      * This way all necessary basic statistics are monitored by the queue.
      */
-    protected Queue<Passenger> passengerQueue;
+    protected Queue<Passenger> departurePassengerQueue;
 
-    protected Queue<Passenger> passengerQueueReturn;
+    protected Queue<Passenger> arrivalPassengerQueue;
 
     /**
      * A waiting queue object is used to represent the parking spot for the VC.
@@ -108,15 +105,15 @@ public class APTS extends Model {
      */
     public void doInitialSchedules() {
 
-        // create the PassengerGeneratorEvent
-        PassengerGeneratorEvent passengerGenerator
-                = new PassengerGeneratorEvent(this, "PassengerGenerator", true);
+        // create the DeparturePassengerGeneratorEvent
+        DeparturePassengerGeneratorEvent passengerGenerator
+                = new DeparturePassengerGeneratorEvent(this, "PassengerGenerator", true);
 
-        // create the ReturnPassengerGeneratorEvent
-        ReturnPassengerGeneratorEvent returnPassengerGenerator
-                = new ReturnPassengerGeneratorEvent(this, "ReturnPassengerGenerator", true);
+        // create the ArrivalPassengerGeneratorEvent
+        ArrivalPassengerGeneratorEvent returnPassengerGenerator
+                = new ArrivalPassengerGeneratorEvent(this, "ReturnPassengerGenerator", true);
         
-                // create the PassengerGeneratorEvent
+        // create the TimeSeriesGeneratorEvent
         TimeSeriesGeneratorEvent seriesGenerator
                 = new TimeSeriesGeneratorEvent(this, "TimeSeriesGenerator", true);
 
@@ -163,8 +160,8 @@ public class APTS extends Model {
     public void init() {
 
         carSpeed = new ContDistUniform(this, "CarSpeedStream", 8.0, 9.0, true, false);
-        batteryDistance = new ContDistUniform(this, "BatteryDistanceStream", 10000, 50000, true, false);
-        chargeTime = new ContDistUniform(this, "ChargeTimeStream", 115, 120, true, false);
+        remainingRange = new ContDistUniform(this, "BatteryDistanceStream", 48000, 50000, true, false);
+        chargeTime = new ContDistUniform(this, "ChargeTimeStream", 4, 5, true, false);
 
         // initalise the truckArrivalTimeStream
         // Parameters:
@@ -173,7 +170,7 @@ public class APTS extends Model {
         // 3.0                      = mean time in minutes between arrival of trucks
         // true                     = show in report?
         // false                    = show in trace?
-        passengerArrivalTime = new ContDistExponential(this, "PassengerArrivalTimeStream", 3.47, true, false);
+        passengerArrivalTime = new ContDistExponential(this, "PassengerArrivalTimeStream", 3.46, true, false);
 
         // necessary because an inter-arrival time can not be negative, but
         // a sample of an exponential distribution can...
@@ -182,15 +179,15 @@ public class APTS extends Model {
         planeArrivalTime = new ContDistExponential(this, "planeArrivalTimeStream", 29.35, true, false);
         planeArrivalTime.setNonNegative(true);
 
-        // initalise the passengerQueue
+        // initalise the departurePassengerQueue
         // Parameters:
         // this          = belongs to this model
         // "Truck Queue" = the name of the Queue
         // true          = show in report?
         // true          = show in trace?
-        passengerQueue = new Queue<Passenger>(this, "Passenger Queue", true, true);
+        departurePassengerQueue = new Queue<Passenger>(this, "Passenger Queue", true, true);
 
-        passengerQueueReturn = new Queue<Passenger>(this, "Passenger Return Queue", true, true);
+        arrivalPassengerQueue = new Queue<Passenger>(this, "Passenger Return Queue", true, true);
 
         // initalise the idleCarQueue
         // Parameters:
@@ -235,7 +232,7 @@ public class APTS extends Model {
     }
 
     public double getBatteryDistance() {
-        return batteryDistance.sample();
+        return remainingRange.sample();
     }
 
     public double getChargeTime() {

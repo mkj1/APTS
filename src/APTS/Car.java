@@ -9,7 +9,7 @@ import desmoj.core.simulator.*;
  */
 public class Car extends Entity {
 
-        public double batteryDistance = 0;
+        public double remainingRange = 0;
         APTS myModel;
 	/**
 	 * Constructor of the van carrier entity.
@@ -21,6 +21,6 @@ public class Car extends Entity {
 	public Car(Model owner, String name, boolean showInTrace) {
 		super(owner, name, showInTrace);
                 myModel = (APTS) owner;
-                batteryDistance = myModel.getBatteryDistance();
+                remainingRange = myModel.getBatteryDistance();
 	}
 }

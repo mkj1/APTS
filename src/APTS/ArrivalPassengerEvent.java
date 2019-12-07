@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Olaf Neidhardt, Ruth Meyer
  */
-public class PassengerReturnArrivalEvent extends Event<Passenger> {
+public class ArrivalPassengerEvent extends Event<Passenger> {
 
     /**
      * a reference to the model this event is a part of. Useful shortcut to
@@ -30,7 +30,7 @@ public class PassengerReturnArrivalEvent extends Event<Passenger> {
      * @param showInTrace flag to indicate if this event shall produce output
      * for the trace
      */
-    public PassengerReturnArrivalEvent(Model owner, String name, boolean showInTrace) {
+    public ArrivalPassengerEvent(Model owner, String name, boolean showInTrace) {
         super(owner, name, showInTrace);
         // store a reference to the model this event is associated with
         myModel = (APTS) owner;
@@ -45,16 +45,16 @@ public class PassengerReturnArrivalEvent extends Event<Passenger> {
      * occupy the van carrier and schedule a service end event. Otherwise the
      * truck just waits (does nothing).
      */
-    public void eventRoutine(Passenger p) {
+    public void eventRoutine(Passenger pas) {
 
-        Queue<Passenger> queueRef = myModel.passengerQueueReturn;
+        Queue<Passenger> queueRef = myModel.arrivalPassengerQueue;
 
-        for (int i = 0; i < 1; i++) {
+
             // create a new passenger
             Passenger passenger = new Passenger(myModel, "Passenger", true, myModel.getReturnGate());
             // p exits a plane and enters the gate ready for pickup
             queueRef.insert(passenger);
-        }
+   
 
         sendTraceNote(queueRef.getName() + " length: " + queueRef.length());
 
@@ -62,16 +62,17 @@ public class PassengerReturnArrivalEvent extends Event<Passenger> {
         if (!myModel.idleCarQueue.isEmpty()) {
             // yes, it is
 
+            Passenger p = queueRef.first();
             // get a reference to the first car from the idle car queue
             Car car = myModel.idleCarQueue.first();
-            if (car.batteryDistance > 2 * p._gate.distance) {
+            if (car.remainingRange > 2 * p._gate.distance) {
                 // remove it from the queue
                 myModel.idleCarQueue.remove(car);
 
                 // remove the p from the queue
-                myModel.passengerQueueReturn.remove(p);
-                //myModel.queueLength.update(myModel.passengerQueue.length());
-                //myModel.returnQueueLength.update(myModel.passengerQueueReturn.length());
+                myModel.arrivalPassengerQueue.remove(p);
+                //myModel.queueLength.update(myModel.departurePassengerQueue.length());
+                //myModel.returnQueueLength.update(myModel.arrivalPassengerQueue.length());
 
                 // create a service end event
                 ServiceEndEvent serviceEnd = new ServiceEndEvent(myModel, "ServiceEndEvent", true);

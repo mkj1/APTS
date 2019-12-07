@@ -47,19 +47,19 @@ public class ChargeEndEvent extends Event<Car> {
     public void eventRoutine(Car car) {
         sendTraceNote(car + " finished charging.");
         myModel.chargingCarQueue.remove(car);
-        car.batteryDistance = myModel.getBatteryDistance();
+        car.remainingRange = myModel.getBatteryDistance();
 
         // check if there are other passengers waiting
-        if (!myModel.passengerQueue.isEmpty()) {
+        if (!myModel.departurePassengerQueue.isEmpty()) {
             // YES, there is at least one other p waiting
 
             // remove the first waiting p from the queue
-            Passenger nextPassenger = myModel.passengerQueue.first();
-            if (car.batteryDistance > nextPassenger._gate.distance) {
+            Passenger nextPassenger = myModel.departurePassengerQueue.first();
+            if (car.remainingRange > nextPassenger._gate.distance) {
                 
-                myModel.passengerQueue.remove(nextPassenger);
-                //myModel.queueLength.update(myModel.passengerQueue.length());
-                //myModel.returnQueueLength.update(myModel.passengerQueueReturn.length());
+                myModel.departurePassengerQueue.remove(nextPassenger);
+                //myModel.queueLength.update(myModel.departurePassengerQueue.length());
+                //myModel.returnQueueLength.update(myModel.arrivalPassengerQueue.length());
 
                 // create a new service end event
                 ServiceEndEvent event = new ServiceEndEvent(myModel, "ServiceEndEvent", true);
@@ -73,15 +73,15 @@ public class ChargeEndEvent extends Event<Car> {
                 chargeEnd.schedule(car, new TimeSpan(myModel.getChargeTime(), TimeUnit.MINUTES));
             }
 
-        } else if (!myModel.passengerQueueReturn.isEmpty()) {
+        } else if (!myModel.arrivalPassengerQueue.isEmpty()) {
 
             // remove the first waiting p from the queue
-            Passenger nextPassenger = myModel.passengerQueueReturn.first();
-            if (car.batteryDistance > nextPassenger._gate.distance) {
+            Passenger nextPassenger = myModel.arrivalPassengerQueue.first();
+            if (car.remainingRange > nextPassenger._gate.distance) {
 
-                myModel.passengerQueueReturn.remove(nextPassenger);
-                //myModel.queueLength.update(myModel.passengerQueue.length());
-                //myModel.returnQueueLength.update(myModel.passengerQueueReturn.length());
+                myModel.arrivalPassengerQueue.remove(nextPassenger);
+                //myModel.queueLength.update(myModel.departurePassengerQueue.length());
+                //myModel.returnQueueLength.update(myModel.arrivalPassengerQueue.length());
 
                 // create a new service end event
                 ServiceEndEvent event = new ServiceEndEvent(myModel, "ServiceEndEvent", true);
