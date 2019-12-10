@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Olaf Neidhardt, Ruth Meyer
  */
-public class DepaturePassengerEvent extends Event<Passenger> {
+public class DeparturePassengerEvent extends Event<Passenger> {
 
     /**
      * a reference to the model this event is a part of. Useful shortcut to
@@ -30,7 +30,7 @@ public class DepaturePassengerEvent extends Event<Passenger> {
      * @param showInTrace flag to indicate if this event shall produce output
      * for the trace
      */
-    public DepaturePassengerEvent(Model owner, String name, boolean showInTrace) {
+    public DeparturePassengerEvent(Model owner, String name, boolean showInTrace) {
         super(owner, name, showInTrace);
         // store a reference to the model this event is associated with
         myModel = (APTS) owner;
@@ -69,9 +69,6 @@ public class DepaturePassengerEvent extends Event<Passenger> {
 
                 // create a service end event
                 ServiceEndEvent serviceEnd = new ServiceEndEvent(myModel, "ServiceEndEvent", true);
-                Random rand = new Random();
-                var r = rand.nextInt(5);
-                // and place it on the event list
 
                 serviceEnd.schedule(car, p, new TimeSpan(myModel.getServiceTime(p._gate.distance), TimeUnit.MINUTES));
             }

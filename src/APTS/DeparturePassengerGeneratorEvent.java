@@ -37,12 +37,12 @@ public class DeparturePassengerGeneratorEvent extends ExternalEvent {
 		// create a new passenger
 		Passenger passenger = new Passenger(model, "Passenger", true, model.getRandomGate());
 		// create a new truck arrival event
-		DepaturePassengerEvent passengerArrival = new DepaturePassengerEvent(model, "PassengerArrivalEvent", true);
+		DeparturePassengerEvent passengerArrival = new DeparturePassengerEvent(model, "PassengerArrivalEvent", true);
 		// and schedule it for the current point in time
 		passengerArrival.schedule(passenger, new TimeSpan(0.0));
 
 		// schedule this truck generator again for the next truck arrival time
-		schedule(new TimeSpan(model.getPassengerArrivalTime(), TimeUnit.MINUTES));
+		schedule(new TimeSpan(model.getPassengerDepartureTime(), TimeUnit.MINUTES));
 		// from inside to outside...
 		// draw a new inter-arrival time value
 		// wrap it in a TimeSpan object

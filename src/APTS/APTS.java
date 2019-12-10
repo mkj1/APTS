@@ -28,8 +28,8 @@ public class APTS extends Model {
      * Random number stream used to draw an arrival time for the next truck. See
      * init() method for stream parameters.
      */
+    private ContDistExponential passengerDepartureTime;
     private ContDistExponential passengerArrivalTime;
-    private ContDistExponential planeArrivalTime;
     /**
      * Random number stream used to draw a service time for a truck. Describes
      * the time needed by the VC to fetch and load the container onto the truck.
@@ -170,14 +170,14 @@ public class APTS extends Model {
         // 3.0                      = mean time in minutes between arrival of trucks
         // true                     = show in report?
         // false                    = show in trace?
-        passengerArrivalTime = new ContDistExponential(this, "PassengerArrivalTimeStream", 3.46, true, false);
+        passengerDepartureTime = new ContDistExponential(this, "PassengerDepartureTimeStream", 3.480, true, false);
 
         // necessary because an inter-arrival time can not be negative, but
         // a sample of an exponential distribution can...
-        passengerArrivalTime.setNonNegative(true);
+        passengerDepartureTime.setNonNegative(true);
 
-        planeArrivalTime = new ContDistExponential(this, "planeArrivalTimeStream", 29.35, true, false);
-        planeArrivalTime.setNonNegative(true);
+        passengerArrivalTime = new ContDistExponential(this, "PassengerArrivalTimeStream", 3.459, true, false);
+        passengerArrivalTime.setNonNegative(true);
 
         // initalise the departurePassengerQueue
         // Parameters:
@@ -245,12 +245,12 @@ public class APTS extends Model {
      *
      * @return double a passengerArrivalTime sample
      */
-    public double getPassengerArrivalTime() {
-        return passengerArrivalTime.sample();
+    public double getPassengerDepartureTime() {
+        return passengerDepartureTime.sample();
     }
 
-    public double getPassengerGateArrivalTime() {
-        return planeArrivalTime.sample();
+    public double getPassengerArrivalTime() {
+        return passengerArrivalTime.sample();
     }
     
 

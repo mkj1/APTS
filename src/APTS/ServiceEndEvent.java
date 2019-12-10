@@ -47,7 +47,7 @@ public class ServiceEndEvent extends EventOf2Entities<Car, Passenger> {
         car.remainingRange = car.remainingRange - 2 * p._gate.distance;
 
         // pass the departure of the p to the trace
-        sendTraceNote(p + " arrived at the destination gate");
+        sendTraceNote(p + " arrived at the destination");
 
         // check if there are other passengers waiting
         if (!myModel.departurePassengerQueue.isEmpty()) {
